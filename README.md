@@ -1,0 +1,2 @@
+# TelegramNumberChecker
+ This Python script checks the status of a phone number on Telegram, determining whether the number is banned, invalid, or valid for use. Using the Telethon library, the script attempts to log in with the provided phone number and returns a simple "OK" or "Not OK" response. It requires the Telegram API ID and Hash, which can be obtained from my.telegram.org. This tool is useful for verifying if a phone number is usable on Telegram before registration.
