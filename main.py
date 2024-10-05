@@ -1,4 +1,5 @@
 import time
+import os
 from telethon.sync import TelegramClient
 from telethon.errors import PhoneNumberBannedError, SessionPasswordNeededError
 from telethon.errors.rpcerrorlist import PhoneNumberInvalidError, FloodWaitError
@@ -7,12 +8,11 @@ import uuid
 api_id = '23262291'
 api_hash = '77c460c8142ca13f32c27ac389db2e35'
 
-# Function to generate a unique session name using UUID
 def generate_session_name():
     return 'session_' + str(uuid.uuid4())
 
 def check_telegram_number(phone_number):
-    session_name = generate_session_name()  # Create a unique session name
+    session_name = generate_session_name()
     client = TelegramClient(session_name, api_id, api_hash)
 
     try:
@@ -33,9 +33,18 @@ def check_telegram_number(phone_number):
     except FloodWaitError as e:
         wait_time = e.seconds
         print(f"Rate limit exceeded. Waiting for {wait_time} seconds...")
-        return check_telegram_number(phone_number)  # Retry after waiting
+        return check_telegram_number(phone_number)
     finally:
         client.disconnect()
+
+def delete_all_session_files():
+    for file in os.listdir():
+        if file.startswith('session_') and file.endswith('.session'):
+            try:
+                os.remove(file)
+                print(f"Deleted session file: {file}")
+            except Exception as e:
+                print(f"Failed to delete {file}: {e}")
 
 def process_numbers(input_file, ok_file, not_ok_file):
     with open(input_file, 'r') as f:
@@ -56,3 +65,4 @@ ok_file = 'ok_numbers.txt'
 not_ok_file = 'not_ok_numbers.txt'
 
 process_numbers(input_file, ok_file, not_ok_file)
+delete_all_session_files()
